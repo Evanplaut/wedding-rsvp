@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&family=Great+Vibes&family=Pinyon+Script&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after {
+        *, *::before, *::after 
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -311,6 +311,20 @@
             transform: none;
         }
 
+        .event-type-group {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            margin-bottom: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+        }
+
+        .event-type-group.visible {
+            max-height: 120px;
+            opacity: 1;
+            margin-bottom: 16px;
+        }
+
         .guest-count-group {
             max-height: 0;
             overflow: hidden;
@@ -473,6 +487,20 @@
                     </div>
                 </div>
 
+                <div class="form-group event-type-group" id="eventTypeGroup">
+                    <label>Attending For</label>
+                    <div class="attendance-options">
+                        <div class="attendance-option">
+                            <input type="radio" id="event-ceremony" name="eventType" value="Ceremony Only">
+                            <label class="radio-label" for="event-ceremony">Ceremony<br>Only</label>
+                        </div>
+                        <div class="attendance-option">
+                            <input type="radio" id="event-full" name="eventType" value="Full Wedding" checked>
+                            <label class="radio-label" for="event-full">Full<br>Wedding</label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group guest-count-group" id="guestCountGroup">
                     <label for="guests">Number in Your Party</label>
                     <select id="guests" name="guests">
@@ -508,12 +536,15 @@
         const attendingYes = document.getElementById('attending-yes');
         const attendingNo = document.getElementById('attending-no');
         const guestCountGroup = document.getElementById('guestCountGroup');
+        const eventTypeGroup = document.getElementById('eventTypeGroup');
 
         attendingYes.addEventListener('change', () => {
+            eventTypeGroup.classList.add('visible');
             guestCountGroup.classList.add('visible');
         });
 
         attendingNo.addEventListener('change', () => {
+            eventTypeGroup.classList.remove('visible');
             guestCountGroup.classList.remove('visible');
         });
 
@@ -539,6 +570,10 @@
                 return;
             }
 
+            const eventType = attending.value === 'Yes'
+                ? (document.querySelector('input[name="eventType"]:checked')?.value || 'Full Wedding')
+                : 'N/A';
+
             const guests = attending.value === 'Yes'
                 ? document.getElementById('guests').value
                 : '0';
@@ -552,6 +587,7 @@
                 const params = new URLSearchParams({
                     name: name,
                     attending: attending.value,
+                    eventType: eventType,
                     guests: guests,
                     timestamp: new Date().toISOString()
                 });
