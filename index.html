@@ -491,11 +491,11 @@
                     <label>Attending For</label>
                     <div class="attendance-options">
                         <div class="attendance-option">
-                            <input type="radio" id="event-ceremony" name="eventType" value="Ceremony Only">
-                            <label class="radio-label" for="event-ceremony">Ceremony<br>Only</label>
+                            <input type="radio" id="event-full" name="eventType" value="Full Wedding" required>
+                            <label class="radio-label" for="event-full">Full<br>Wedding</label>
                         </div>
                         <div class="attendance-option">
-                            <input type="radio" id="event-full" name="eventType" value="Full Wedding">
+                            <input type="radio" id="event-ceremony" name="eventType" value="Ceremony Only">
                             <label class="radio-label" for="event-full">Full<br>Wedding</label>
                         </div>
                     </div>
@@ -567,6 +567,14 @@
             if (!name || !attending) {
                 formMessage.className = 'form-message error';
                 formMessage.textContent = 'Please fill out all fields.';
+                formMessage.style.display = 'block';
+                return;
+            }
+
+            if (attending.value === 'Yes' && !document.querySelector('input[name="eventType"]:checked')) {
+                formMessage.className = 'form-message error';
+                formMessage.textContent = 'Please select Ceremony Only or Full Wedding.';
+                formMessage.style.display = 'block';
                 return;
             }
 
